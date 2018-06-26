@@ -18,15 +18,16 @@ module "vpc" {
 }
 
 module "eks" {
-  source                = "terraform-aws-modules/eks/aws"
-  version               = "0.2.0"
-  cluster_name          = "tsub-sandbox"
-  subnets               = ["${module.vpc.public_subnets}"]
-  vpc_id                = "${module.vpc.vpc_id}"
-  cluster_ingress_cidrs = ["180.235.18.82/32"]
+  source       = "terraform-aws-modules/eks/aws"
+  version      = "1.1.0"
+  cluster_name = "tsub-sandbox"
+  subnets      = ["${module.vpc.public_subnets}"]
+  vpc_id       = "${module.vpc.vpc_id}"
 
-  workers_asg_desired_capacity = 3
-  workers_instance_type        = "t2.small"
+  worker_groups = [{
+    asg_desired_capacity = 3
+    instance_type        = "t2.small"
+  }]
 
   configure_kubectl_session = true
   config_output_path        = "../kubernetes"
