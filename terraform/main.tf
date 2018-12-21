@@ -23,6 +23,7 @@ module "eks" {
   cluster_name    = "tsub-sandbox"
   subnets         = ["${module.vpc.public_subnets}"]
   vpc_id          = "${module.vpc.vpc_id}"
+  cluster_version = "1.11"
 
   worker_groups = [{
     asg_desired_capacity = 3
