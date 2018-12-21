@@ -1,6 +1,6 @@
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "1.34.0"
+  version = "1.49.0"
 
   name = "tsub-sandbox"
   cidr = "10.0.0.0/16"
@@ -19,7 +19,7 @@ module "vpc" {
 
 module "eks" {
   source       = "terraform-aws-modules/eks/aws"
-  version      = "1.1.0"
+  version      = "2.0.0"
   cluster_name = "tsub-sandbox"
   subnets      = ["${module.vpc.public_subnets}"]
   vpc_id       = "${module.vpc.vpc_id}"
@@ -29,8 +29,7 @@ module "eks" {
     instance_type        = "t2.small"
   }]
 
-  configure_kubectl_session = true
-  config_output_path        = "../kubernetes"
+  config_output_path = "../kubernetes/"
 
   tags = {
     Terraform   = "true"
