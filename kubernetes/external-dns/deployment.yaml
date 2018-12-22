@@ -8,7 +8,7 @@ spec:
   template:
     metadata:
       annotations:
-        iam.amazonaws.com/role: tsub-sandbox-external-dns
+        iam.amazonaws.com/role: ${sed:cluster_name}-external-dns
       labels:
         app: external-dns
     spec:
