@@ -1,7 +1,62 @@
 # For EKS Worker nodes
 
-resource "aws_iam_policy" "ingress-controller" {
-  name = "${local.cluster_name}-ALBingressController"
+resource "aws_iam_policy" "kube-aws-iam-controller" {
+  name = "${local.cluster_name}-kube-aws-iam-controller"
+
+  policy = <<EOS
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "sts:AssumeRole"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOS
+}
+
+resource "aws_iam_policy_attachment" "kube-aws-iam-controller" {
+  name       = "${local.cluster_name}-kube-aws-iam-controller"
+  roles      = ["${module.eks.worker_iam_role_name}"]
+  policy_arn = "${aws_iam_policy.kube-aws-iam-controller.arn}"
+}
+
+# For alb-ingress-controller
+
+resource "aws_iam_role" "alb-ingress-controller" {
+  name = "${local.cluster_name}-alb-ingress-controller"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    },
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "AWS": "${module.eks.worker_iam_role_arn}"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "alb-ingress-controller" {
+  name = "${local.cluster_name}-alb-ingress-controller"
 
   policy = <<EOS
 {
@@ -114,35 +169,10 @@ resource "aws_iam_policy" "ingress-controller" {
 EOS
 }
 
-resource "aws_iam_policy" "kube-aws-iam-controller" {
-  name = "${local.cluster_name}-kube-aws-iam-controller"
-
-  policy = <<EOS
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "sts:AssumeRole"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
-    }
-  ]
-}
-EOS
-}
-
-resource "aws_iam_policy_attachment" "ingress-controller" {
-  name       = "${local.cluster_name}-ALBingressController"
-  roles      = ["${module.eks.worker_iam_role_name}"]
-  policy_arn = "${aws_iam_policy.ingress-controller.arn}"
-}
-
-resource "aws_iam_policy_attachment" "kube-aws-iam-controller" {
-  name       = "${local.cluster_name}-kube-aws-iam-controller"
-  roles      = ["${module.eks.worker_iam_role_name}"]
-  policy_arn = "${aws_iam_policy.kube-aws-iam-controller.arn}"
+resource "aws_iam_policy_attachment" "alb-ingress-controller" {
+  name       = "${local.cluster_name}-alb-ingress-controller"
+  roles      = ["${aws_iam_role.alb-ingress-controller.name}"]
+  policy_arn = "${aws_iam_policy.alb-ingress-controller.arn}"
 }
 
 # For kube-aws-iam-controller/example-app.yaml
