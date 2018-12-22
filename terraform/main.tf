@@ -17,18 +17,18 @@ module "vpc" {
   }
 
   vpc_tags = {
-    "kubernetes.io/cluster/tsub-sandbox" = "shared"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/tsub-sandbox" = "shared"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 }
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "2.0.0"
-  cluster_name    = "tsub-sandbox"
+  cluster_name    = "${local.cluster_name}"
   subnets         = ["${module.vpc.public_subnets}"]
   vpc_id          = "${module.vpc.vpc_id}"
   cluster_version = "1.11"
