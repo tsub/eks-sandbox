@@ -10,7 +10,8 @@ metadata:
     app: 2048-ingress
 spec:
   rules:
-    - http:
+    - host: 2048.sandbox.tsub.me
+      http:
         paths:
           - path: /*
             backend:
