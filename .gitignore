@@ -1,4 +1,4 @@
 /.env
-/kubernetes/config-map-aws-auth.yaml
-/kubernetes/kubeconfig
+/kubernetes/config-map-aws-auth*.yaml
+/kubernetes/kubeconfig*
 /terraform/.terraform
