@@ -15,6 +15,14 @@ module "vpc" {
     Terraform   = "true"
     Environment = "dev"
   }
+
+  vpc_tags = {
+    "kubernetes.io/cluster/tsub-sandbox" = "shared"
+  }
+
+  public_subnet_tags = {
+    "kubernetes.io/cluster/tsub-sandbox" = "shared"
+  }
 }
 
 module "eks" {
