@@ -229,3 +229,70 @@ resource "aws_iam_policy_attachment" "s3-access" {
   roles      = ["${aws_iam_role.s3-access.name}"]
   policy_arn = "${aws_iam_policy.s3-access.arn}"
 }
+
+# For external-dns
+
+resource "aws_iam_role" "external-dns" {
+  name = "${local.cluster_name}-external-dns"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    },
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "AWS": "${module.eks.worker_iam_role_arn}"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "external-dns" {
+  name = "${local.cluster_name}-external-dns"
+
+  policy = <<EOS
+{
+ "Version": "2012-10-17",
+ "Statement": [
+   {
+     "Effect": "Allow",
+     "Action": [
+       "route53:ChangeResourceRecordSets"
+     ],
+     "Resource": [
+       "arn:aws:route53:::hostedzone/*"
+     ]
+   },
+   {
+     "Effect": "Allow",
+     "Action": [
+       "route53:ListHostedZones",
+       "route53:ListResourceRecordSets"
+     ],
+     "Resource": [
+       "*"
+     ]
+   }
+ ]
+}
+EOS
+}
+
+resource "aws_iam_policy_attachment" "external-dns" {
+  name       = "${local.cluster_name}-external-dns"
+  roles      = ["${aws_iam_role.external-dns.name}"]
+  policy_arn = "${aws_iam_policy.external-dns.arn}"
+}
