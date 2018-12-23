@@ -24,7 +24,7 @@ spec:
   template:
     metadata:
       annotations:
-        iam.amazonaws.com/role: ${sed:cluster_name}-alb-ingress-controller
+        iam.amazonaws.com/role: ${terraform:cluster_name}-alb-ingress-controller
       creationTimestamp: null
       labels:
         app: alb-ingress-controller
@@ -43,7 +43,7 @@ spec:
             # Name of your cluster. Used when naming resources created
             # by the ALB Ingress Controller, providing distinction between
             # clusters.
-            - --cluster-name=${sed:cluster_name}
+            - --cluster-name=${terraform:cluster_name}
 
             # AWS VPC ID this ingress controller will use to create AWS resources.
             # If unspecified, it will be discovered from ec2metadata.
@@ -105,4 +105,4 @@ spec:
       # - name: aws-iam-credentials
       #   secret:
       #     # secret should be named: aws-iam-<name-of-your-aws-iam-role>
-      #     secretName: aws-iam-${sed:cluster_name}-alb-ingress-controller
+      #     secretName: aws-iam-${terraform:cluster_name}-alb-ingress-controller

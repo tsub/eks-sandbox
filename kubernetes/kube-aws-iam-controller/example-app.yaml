@@ -46,4 +46,4 @@ spec:
       - name: aws-iam-credentials
         secret:
           # secret should be named: aws-iam-<name-of-your-aws-iam-role>
-          secretName: aws-iam-${sed:cluster_name}-s3-access
+          secretName: aws-iam-${terraform:cluster_name}-s3-access
