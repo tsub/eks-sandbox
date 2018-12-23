@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: aggregator-deployment
+  namespace: logging
+  labels:
+    app: aggregator
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: aggregator
+    spec:
+      containers:
+      - name: aggregator
+        image: fluent/fluentd:stable
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 24224
+        volumeMounts:
+        - name: aggregator-config
+          mountPath: /fluentd/etc/
+      volumes:
+      - name: aggregator-config
+        configMap:
+          name: aggregator-config
