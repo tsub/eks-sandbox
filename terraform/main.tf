@@ -38,6 +38,7 @@ module "eks" {
   worker_groups = [{
     asg_desired_capacity = 3
     instance_type        = "t2.small"
+    subnets              = "${join(",", module.vpc.private_subnets)}"
   }]
 
   config_output_path = "../kubernetes/"
