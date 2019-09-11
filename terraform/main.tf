@@ -1,6 +1,6 @@
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "1.71.0"
+  version = "2.15.0"
 
   name = "tsub-sandbox"
   cidr = "10.0.0.0/16"
