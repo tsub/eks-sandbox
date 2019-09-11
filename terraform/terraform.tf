@@ -1,9 +1,12 @@
 terraform {
   required_version = "v0.11.14"
 
-  backend "s3" {
-    bucket = "tsub-tfstate"
-    key    = "eks-sandbox"
-    region = "ap-northeast-1"
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "tsub-sandbox"
+
+    workspaces {
+      name = "eks-sandbox"
+    }
   }
 }
