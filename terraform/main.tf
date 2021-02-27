@@ -50,3 +50,18 @@ module "eks" {
     Environment = "dev"
   }
 }
+
+resource "aws_route53_zone" "sandbox" {
+  name          = local.route53_sandbox_zone
+  force_destroy = true
+}
+
+resource "aws_route53_record" "sandbox-ns" {
+  provider = aws.main
+
+  name    = local.route53_sandbox_zone
+  type    = "NS"
+  records = aws_route53_zone.sandbox.name_servers
+  zone_id = data.aws_route53_zone.main.zone_id
+  ttl     = "300"
+}
