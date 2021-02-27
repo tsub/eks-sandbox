@@ -1,6 +1,6 @@
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "2.15.0"
+  version = "2.77.0"
 
   name = "tsub-sandbox"
   cidr = "10.0.0.0/16"
@@ -29,16 +29,16 @@ module "vpc" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "5.1.0"
+  version         = "14.0.0"
   cluster_name    = local.cluster_name
+  cluster_version = "1.19"
   subnets         = module.vpc.public_subnets
   vpc_id          = module.vpc.vpc_id
-  cluster_version = "1.14"
 
-  worker_groups = [
+  worker_groups_launch_template = [
     {
       asg_desired_capacity = 3
-      instance_type        = "t2.small"
+      instance_type        = "t3.small"
       subnets              = module.vpc.private_subnets
     },
   ]
