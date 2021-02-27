@@ -20,8 +20,8 @@ EOS
 }
 
 resource "aws_iam_policy_attachment" "kube-aws-iam-controller" {
-  name = "${local.cluster_name}-kube-aws-iam-controller"
-  roles = [module.eks.worker_iam_role_name]
+  name       = "${local.cluster_name}-kube-aws-iam-controller"
+  roles      = [module.eks.worker_iam_role_name]
   policy_arn = aws_iam_policy.kube-aws-iam-controller.arn
 }
 
@@ -170,8 +170,8 @@ EOS
 }
 
 resource "aws_iam_policy_attachment" "alb-ingress-controller" {
-  name = "${local.cluster_name}-alb-ingress-controller"
-  roles = [aws_iam_role.alb-ingress-controller.name]
+  name       = "${local.cluster_name}-alb-ingress-controller"
+  roles      = [aws_iam_role.alb-ingress-controller.name]
   policy_arn = aws_iam_policy.alb-ingress-controller.arn
 }
 
@@ -225,8 +225,8 @@ EOS
 }
 
 resource "aws_iam_policy_attachment" "s3-access" {
-  name = "${local.cluster_name}-s3-access"
-  roles = [aws_iam_role.s3-access.name]
+  name       = "${local.cluster_name}-s3-access"
+  roles      = [aws_iam_role.s3-access.name]
   policy_arn = aws_iam_policy.s3-access.arn
 }
 
@@ -292,7 +292,7 @@ EOS
 }
 
 resource "aws_iam_policy_attachment" "external-dns" {
-  name = "${local.cluster_name}-external-dns"
-  roles = [aws_iam_role.external-dns.name]
+  name       = "${local.cluster_name}-external-dns"
+  roles      = [aws_iam_role.external-dns.name]
   policy_arn = aws_iam_policy.external-dns.arn
 }
