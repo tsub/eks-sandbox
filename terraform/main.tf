@@ -35,13 +35,13 @@ module "eks" {
   subnets         = module.vpc.public_subnets
   vpc_id          = module.vpc.vpc_id
 
-  worker_groups_launch_template = [
-    {
-      asg_desired_capacity = 3
-      instance_type        = "t3.small"
-      subnets              = module.vpc.private_subnets
-    },
-  ]
+  node_groups = {
+    main = {
+      desired_capacity = 3
+      instance_types   = ["t3.small"]
+      subnets          = module.vpc.private_subnets
+    }
+  }
 
   config_output_path = "../kubernetes/"
 
