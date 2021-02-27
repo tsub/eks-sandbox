@@ -44,6 +44,7 @@ module "eks" {
   }
 
   config_output_path = "../kubernetes/"
+  enable_irsa        = true
 
   tags = {
     Terraform   = "true"
