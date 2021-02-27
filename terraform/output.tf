@@ -7,5 +7,5 @@ output "cluster_name" {
 }
 
 output "route53_zone" {
-  value = local.route53_zone
+  value = local.route53_sandbox_zone
 }

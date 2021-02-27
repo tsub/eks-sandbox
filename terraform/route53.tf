@@ -1,6 +1,16 @@
 resource "aws_route53_zone" "sandbox" {
-  name          = local.route53_zone
+  name          = local.route53_sandbox_zone
   force_destroy = true
+}
+
+resource "aws_route53_record" "sandbox-ns" {
+  provider = aws.main
+
+  name    = local.route53_sandbox_zone
+  type    = "NS"
+  records = aws_route53_zone.sandbox.name_servers
+  zone_id = data.aws_route53_zone.main.zone_id
+  ttl     = "300"
 }
 
 # For ACM
@@ -18,7 +28,6 @@ resource "aws_route53_record" "app-2048-validation" {
   type    = each.value.type
   records = [each.value.record]
 
-  zone_id         = aws_route53_zone.sandbox.zone_id
-  ttl             = "300"
-  allow_overwrite = false
+  zone_id = aws_route53_zone.sandbox.zone_id
+  ttl     = "300"
 }
