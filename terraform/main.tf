@@ -44,6 +44,12 @@ module "eks" {
     }
   }
 
+  map_roles = [{
+    rolearn  = replace(aws_iam_role.deployment-pipeline-codebuild.arn, "service-role/", "")
+    username = "deployment-pipeline-codebuild"
+    groups   = ["system:masters"]
+  }]
+
   tags = {
     Terraform   = "true"
     Environment = "dev"

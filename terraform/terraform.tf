@@ -23,12 +23,9 @@ terraform {
     }
   }
 
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "tsub-sandbox"
-
-    workspaces {
-      name = "eks-sandbox"
-    }
+  backend "s3" {
+    bucket         = "tsub-tfstate"
+    key            = "eks-sandbox/terraform.tfstate"
+    dynamodb_table = "tsub-tfstate-locking"
   }
 }

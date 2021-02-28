@@ -13,3 +13,7 @@ variable "route53_main_zone" {
 variable "route53_sandbox_zone" {
   type = string
 }
+
+variable "aws_chatbot_arn_for_slack" {
+  type = string
+}

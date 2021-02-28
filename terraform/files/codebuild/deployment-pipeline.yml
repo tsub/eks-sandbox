@@ -1,0 +1,34 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      # Install terraform
+      - yum install -y unzip
+      - wget "https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip" -O /var/tmp/terraform.zip
+      - unzip -d /var/tmp /var/tmp/terraform.zip
+      - chmod +x /var/tmp/terraform
+      - mv /var/tmp/terraform /usr/local/bin/
+      - terraform version
+
+      # Install kubectl
+      - curl -o /usr/bin/kubectl "${KUBECTL_URL}"
+      - chmod +x /usr/bin/kubectl
+      - kubectl version --short --client
+
+  pre_build:
+    commands:
+      - terraform -chdir=terraform init -input=false
+
+  build:
+    commands:
+      - terraform -chdir=terraform $TF_CMD
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+
+artifacts:
+  files:
+    - '**/*'
+  name: plan_output_$(date +%Y-%m-%d) 
