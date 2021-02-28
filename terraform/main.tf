@@ -33,6 +33,7 @@ module "eks" {
   cluster_version = "1.19"
   subnets         = module.vpc.public_subnets
   vpc_id          = module.vpc.vpc_id
+  enable_irsa     = true
 
   node_groups = {
     main = {
@@ -41,9 +42,6 @@ module "eks" {
       subnets          = module.vpc.private_subnets
     }
   }
-
-  config_output_path = "../kubernetes/"
-  enable_irsa        = true
 
   tags = {
     Terraform   = "true"
@@ -65,3 +63,76 @@ resource "aws_route53_record" "sandbox-ns" {
   zone_id = data.aws_route53_zone.main.zone_id
   ttl     = "300"
 }
+
+resource "aws_lb" "main" {
+  name               = local.cluster_name
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.alb.id]
+  subnets            = module.vpc.public_subnets
+
+  tags = {
+    Terraform   = "true"
+    Environment = "dev"
+  }
+}
+
+resource "aws_security_group" "alb" {
+  name   = "${local.cluster_name}-alb"
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+
+resource "aws_lb_listener" "main-http" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+resource "aws_lb_listener" "main-https" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate_validation.game-2048.certificate_arn # dummy
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      status_code  = "404"
+    }
+  }
+}
+

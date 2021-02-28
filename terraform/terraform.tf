@@ -16,6 +16,11 @@ terraform {
       source  = "hashicorp/helm"
       version = "2.0.2"
     }
+
+    null = {
+      source  = "hashicorp/null"
+      version = "3.1.0"
+    }
   }
 
   backend "remote" {
