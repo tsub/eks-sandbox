@@ -62,7 +62,7 @@ resource "kubernetes_service" "game-2048" {
 }
 
 resource "aws_lb_target_group" "game-2048" {
-  name        = "${local.cluster_name}-game-2048"
+  name        = "${var.cluster_name}-game-2048"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = module.vpc.vpc_id
@@ -74,7 +74,7 @@ resource "aws_lb_listener_rule" "game-2048" {
 
   condition {
     host_header {
-      values = ["2048.${local.route53_sandbox_zone}"]
+      values = ["2048.${var.route53_sandbox_zone}"]
     }
   }
 
@@ -138,7 +138,7 @@ resource "null_resource" "target-group-binding-2048" {
 }
 
 resource "aws_acm_certificate" "game-2048" {
-  domain_name       = "2048.${local.route53_sandbox_zone}"
+  domain_name       = "2048.${var.route53_sandbox_zone}"
   validation_method = "DNS"
 }
 
@@ -165,7 +165,7 @@ resource "aws_route53_record" "game-2048-validation" {
 }
 
 resource "aws_route53_record" "game-2048" {
-  name    = "2048.${local.route53_sandbox_zone}"
+  name    = "2048.${var.route53_sandbox_zone}"
   type    = "A"
   zone_id = aws_route53_zone.sandbox.zone_id
 

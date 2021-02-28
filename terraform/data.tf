@@ -11,5 +11,5 @@ data "aws_eks_cluster_auth" "cluster" {
 data "aws_route53_zone" "main" {
   provider = aws.main
 
-  name = local.route53_main_zone
+  name = var.route53_main_zone
 }

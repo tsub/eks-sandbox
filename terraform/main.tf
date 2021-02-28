@@ -17,8 +17,8 @@ module "vpc" {
   }
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = 1
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                    = 1
   }
 
   private_subnet_tags = {
@@ -27,13 +27,14 @@ module "vpc" {
 }
 
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = "14.0.0"
-  cluster_name    = local.cluster_name
-  cluster_version = "1.19"
-  subnets         = module.vpc.public_subnets
-  vpc_id          = module.vpc.vpc_id
-  enable_irsa     = true
+  source             = "terraform-aws-modules/eks/aws"
+  version            = "14.0.0"
+  cluster_name       = var.cluster_name
+  cluster_version    = "1.19"
+  subnets            = module.vpc.public_subnets
+  vpc_id             = module.vpc.vpc_id
+  enable_irsa        = true
+  config_output_path = "./kubeconfig"
 
   node_groups = {
     main = {
@@ -50,14 +51,14 @@ module "eks" {
 }
 
 resource "aws_route53_zone" "sandbox" {
-  name          = local.route53_sandbox_zone
+  name          = var.route53_sandbox_zone
   force_destroy = true
 }
 
 resource "aws_route53_record" "sandbox-ns" {
   provider = aws.main
 
-  name    = local.route53_sandbox_zone
+  name    = var.route53_sandbox_zone
   type    = "NS"
   records = aws_route53_zone.sandbox.name_servers
   zone_id = data.aws_route53_zone.main.zone_id
@@ -65,7 +66,7 @@ resource "aws_route53_record" "sandbox-ns" {
 }
 
 resource "aws_lb" "main" {
-  name               = local.cluster_name
+  name               = var.cluster_name
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
   subnets            = module.vpc.public_subnets
@@ -77,7 +78,7 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_security_group" "alb" {
-  name   = "${local.cluster_name}-alb"
+  name   = "${var.cluster_name}-alb"
   vpc_id = module.vpc.vpc_id
 
   ingress {

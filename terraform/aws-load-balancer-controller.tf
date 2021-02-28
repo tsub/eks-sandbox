@@ -40,7 +40,7 @@ resource "helm_release" "aws-load-balancer-controller" {
 
   set {
     name  = "clusterName"
-    value = local.cluster_name
+    value = var.cluster_name
   }
 
   set {
