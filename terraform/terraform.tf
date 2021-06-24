@@ -23,9 +23,11 @@ terraform {
     }
   }
 
-  backend "s3" {
-    bucket         = "tsub-tfstate"
-    key            = "eks-sandbox/terraform.tfstate"
-    dynamodb_table = "tsub-tfstate-locking"
-  }
+  backend "local" {}
+
+  # backend "s3" {
+  #   bucket         = "tsub-tfstate"
+  #   key            = "eks-sandbox/terraform.tfstate"
+  #   dynamodb_table = "tsub-tfstate-locking"
+  # }
 }
